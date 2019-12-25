@@ -53,7 +53,7 @@ public class Main {
 			
 			try {
 				// 这一步更新模块的构造函数，以后用新的函数构造模块，所以经过这一步，新创建的对象都使用的热更后的新类型
-				Human.updateModuleConstructor(modType, clazz);
+				modType.updateModuleConstructor(clazz);
 				// 这一步升级旧模块的实例
 				human.hotfixModule(modType, copyConstructor);
 			} catch (Exception e) {
