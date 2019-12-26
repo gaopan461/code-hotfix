@@ -64,8 +64,10 @@ public class Main {
 			System.out.println(String.format("\n=======%s热更成功===========\n", strs[1]));
 			
 			// 看看旧实例是否更新成功
+			System.out.println("============调用旧实例的doSomeThing方法===================");
 			human.doSomeThing();
 			// 看看新实例是否更新成功
+			System.out.println("============调用新实例的doSomeThing方法===================");
 			new Human().doSomeThing();
 		} while (true);
 		
