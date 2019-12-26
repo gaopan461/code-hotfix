@@ -1,7 +1,7 @@
-package org.jow.hotfix.override.module.test;
+package org.jow.hotfix.classloader.module.test;
 
-import org.jow.hotfix.override.Human;
-import org.jow.hotfix.override.module.ModBase;
+import org.jow.hotfix.classloader.Human;
+import org.jow.hotfix.classloader.module.ModBase;
 
 /**
  * 用来测试热更的模块
@@ -28,7 +28,7 @@ public class ModTest extends ModBase {
 	 * 测试热更的成员函数，请不要申明成private，否则热更时无法修改
 	 */
 	public void doSomeThing() {
-		System.out.println("对象类型：" + this.getClass().getSimpleName());
+		System.out.println("对象类型：" + this.getClass().getSimpleName() + ",类加载器:" + this.getClass().getClassLoader());
 		System.out.println("i=" + i);
 	}
 

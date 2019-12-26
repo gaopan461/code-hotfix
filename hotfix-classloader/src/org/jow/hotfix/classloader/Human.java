@@ -1,10 +1,10 @@
-package org.jow.hotfix.override;
+package org.jow.hotfix.classloader;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 
-import org.jow.hotfix.override.module.EModType;
-import org.jow.hotfix.override.module.ModBase;
-import org.jow.hotfix.override.module.test.ModTest;
+import org.jow.hotfix.classloader.module.EModType;
+import org.jow.hotfix.classloader.module.ModBase;
 
 /**
  * 玩家对象
@@ -34,8 +34,13 @@ public class Human {
 	}
 	
 	public void doSomeThing() {
-		ModTest modTest = (ModTest) modules[EModType.ModTest.ordinal()];
-		modTest.doSomeThing();
+		ModBase modTest = modules[EModType.ModTest.ordinal()];
+		try {
+			Method method = modTest.getClass().getMethod("doSomeThing");
+			method.invoke(modTest);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 }

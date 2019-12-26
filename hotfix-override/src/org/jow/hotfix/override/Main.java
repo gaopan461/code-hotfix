@@ -9,7 +9,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		Human human = new Human();
-		human.getModTest().doSomeThing();
+		human.doSomeThing();
 		
 		Scanner scanner = new Scanner(System.in);
 		String str;
@@ -57,15 +57,16 @@ public class Main {
 				// 这一步升级旧模块的实例
 				human.hotfixModule(modType, copyConstructor);
 			} catch (Exception e) {
+				e.printStackTrace();
 				System.err.println(String.format("热更失败：输入类%s，原因：%s", strs[1], e.getMessage()));
 			}
 			
 			System.out.println(String.format("\n=======%s热更成功===========\n", strs[1]));
 			
 			// 看看旧实例是否更新成功
-			human.getModTest().doSomeThing();
+			human.doSomeThing();
 			// 看看新实例是否更新成功
-			new Human().getModTest().doSomeThing();
+			new Human().doSomeThing();
 		} while (true);
 		
 		scanner.close();

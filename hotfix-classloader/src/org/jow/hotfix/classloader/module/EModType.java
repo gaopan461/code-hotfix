@@ -1,39 +1,46 @@
-package org.jow.hotfix.override.module;
+package org.jow.hotfix.classloader.module;
 
 import java.lang.reflect.Constructor;
 
-import org.jow.hotfix.override.Human;
-import org.jow.hotfix.override.module.test.ModTest;
+import org.jow.hotfix.classloader.Human;
 
 /**
  * 全部模块枚举定义
  * @author gaopan
  */
 public enum EModType {
-	ModTest(ModTest.class),
+	ModTest("org.jow.hotfix.classloader.module.test.ModTest"),
 	;
 	
 	/** 所有模块的构造函数 */
 	private static Constructor<?>[] moduleConstructors = new Constructor<?>[EModType.values().length];
 	
-	/** 模块的原始类 */
-	private final Class<?> originalClass;
+	/** 模块完整类名 */
+	private String className;
 	
 	static {
+		ClassLoader classLoader = new ModClassLoader();
 		for (EModType modType : EModType.values()) {
-			modType.updateModuleConstructor(modType.originalClass);
+			modType.updateModuleConstructor(classLoader);
 		}
 	}
 	
-	private EModType(Class<?> originalClass) {
-		this.originalClass = originalClass;
+	private EModType(String className) {
+		this.className = className;
 	}
 	
 	/**
 	 * 热更模块，把旧模块的构造函数替换成新的
-	 * @param clazz
+	 * @param classLoader
 	 */
-	public void updateModuleConstructor(Class<?> clazz) {
+	public void updateModuleConstructor(ClassLoader classLoader) {
+		Class<?> clazz;
+		try {
+			clazz = classLoader.loadClass(className);
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException("类不存在", e);
+		}
+		
 		try {
 			moduleConstructors[ordinal()] = clazz.getConstructor(Human.class);
 		} catch (Exception e) {
@@ -56,16 +63,19 @@ public enum EModType {
 	
 	/**
 	 * 检测新模块类是否满足热更条件
-	 * @param clazz 新模块类
+	 * @param classLoader 新的类加载器
 	 * @return 满足的话，返回新模块类的拷贝构造函数
 	 */
-	public Constructor<?> checkHotfix(Class<?> clazz) {
-		if (!originalClass.isAssignableFrom(clazz)) {
-			throw new IllegalArgumentException(String.format("输入类不是%s的子类", clazz.getSimpleName(), originalClass.getSimpleName()));
+	public Constructor<?> checkHotfix(ClassLoader classLoader) {
+		Class<?> clazz;
+		try {
+			clazz = classLoader.loadClass(className);
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException("类不存在", e);
 		}
 		
 		try {
-			return clazz.getConstructor(originalClass);
+			return clazz.getConstructor(clazz);
 		} catch (Exception e) {
 			throw new IllegalArgumentException(String.format("输入类缺少拷贝构造函数", clazz.getSimpleName()), e);
 		}
