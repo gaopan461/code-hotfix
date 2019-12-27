@@ -49,6 +49,7 @@ public class Main {
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.err.println(String.format("热更失败：模块%s，原因：%s", str, e.getMessage()));
+				continue;
 			}
 			
 			System.out.println(String.format("\n=======%s热更成功===========\n", str));
