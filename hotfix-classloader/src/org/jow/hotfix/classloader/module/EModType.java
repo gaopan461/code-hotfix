@@ -9,14 +9,14 @@ import org.jow.hotfix.classloader.Human;
  * @author gaopan
  */
 public enum EModType {
-	ModTest("org.jow.hotfix.classloader.module.test.ModTest"),
+	ModTest(org.jow.hotfix.classloader.module.test.ModTest.class),
 	;
 	
 	/** 所有模块的构造函数 */
 	private static Constructor<?>[] moduleConstructors = new Constructor<?>[EModType.values().length];
 	
 	/** 模块完整类名 */
-	private String className;
+	private Class<?> modClass;
 	
 	static {
 		ClassLoader classLoader = new ModClassLoader();
@@ -25,8 +25,8 @@ public enum EModType {
 		}
 	}
 	
-	private EModType(String className) {
-		this.className = className;
+	private EModType(Class<?> modClass) {
+		this.modClass = modClass;
 	}
 	
 	/**
@@ -36,7 +36,7 @@ public enum EModType {
 	public void updateModuleConstructor(ClassLoader classLoader) {
 		Class<?> clazz;
 		try {
-			clazz = classLoader.loadClass(className);
+			clazz = classLoader.loadClass(modClass.getName() + "Impl");
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException("类不存在", e);
 		}
@@ -69,13 +69,13 @@ public enum EModType {
 	public Constructor<?> checkHotfix(ClassLoader classLoader) {
 		Class<?> clazz;
 		try {
-			clazz = classLoader.loadClass(className);
+			clazz = classLoader.loadClass(modClass.getName() + "Impl");
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException("类不存在", e);
 		}
 		
 		try {
-			return clazz.getConstructor(clazz);
+			return clazz.getConstructor(modClass);
 		} catch (Exception e) {
 			throw new IllegalArgumentException(String.format("输入类缺少拷贝构造函数", clazz.getSimpleName()), e);
 		}

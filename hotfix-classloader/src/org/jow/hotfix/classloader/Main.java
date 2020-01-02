@@ -32,7 +32,6 @@ public class Main {
 			// 创建新的类加载器，用来重新加载热更类
 			ClassLoader classLoader = new ModClassLoader();
 			// 检测指定类是否满足热更条件
-			@SuppressWarnings("unused")
 			Constructor<?> copyConstructor;
 			try {
 				copyConstructor = modType.checkHotfix(classLoader);
@@ -45,7 +44,7 @@ public class Main {
 				// 这一步更新模块的构造函数，以后用新的函数构造模块，所以经过这一步，新创建的对象都使用的热更后的新类型
 				modType.updateModuleConstructor(classLoader);
 				// 这一步升级旧模块的实例；这里无法升级成功，会报参数类型不匹配的异常
-//				human.hotfixModule(modType, copyConstructor);
+				human.hotfixModule(modType, copyConstructor);
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.err.println(String.format("热更失败：模块%s，原因：%s", str, e.getMessage()));
